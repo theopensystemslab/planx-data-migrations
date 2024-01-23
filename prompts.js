@@ -4,7 +4,7 @@ const setupPrompts = [
     description: "Enter the environment you want to connect to",
     type: "string",
     default: "staging",
-    pattern: /^(?:production\b|staging\b|local\b)/,
+    enum: ["production", "staging", "local"],
     message: "Enter 'production', 'staging', or 'local' only",
     required: true,
   },
