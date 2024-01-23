@@ -3,7 +3,7 @@ const setupPrompts = [
     name: "hasuraEnvironment",
     description: "Enter the environment you want to connect to",
     type: "string",
-    default: "production",
+    default: "staging",
     pattern: /^(?:production\b|staging\b|local\b)/,
     message: "Enter 'production', 'staging', or 'local' only",
     required: true,
