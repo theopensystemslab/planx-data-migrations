@@ -4,7 +4,7 @@
 const updateDrawBoundaryNodeData = (flowData) => {
   let newFlowData = flowData;
   Object.entries(flowData)
-    .filter(([_nodeId, nodeData]) => nodeData["type"] === 10 && nodeData["data"] !== defaultDrawBoundaryNodeData)
+    .filter(([_nodeId, nodeData]) => nodeData["type"] === 10)
     .forEach(([drawBoundaryNodeId, _drawBoundaryNodeData]) => newFlowData[drawBoundaryNodeId]["data"] = defaultDrawBoundaryNodeData);
   return newFlowData;
 }
@@ -12,7 +12,7 @@ const updateDrawBoundaryNodeData = (flowData) => {
 const updatePropertyInformationNodeData = (flowData) => {
   let newFlowData = flowData;
   Object.entries(flowData)
-    .filter(([_nodeId, nodeData]) => nodeData["type"] === 12 && nodeData["data"] !== defaultPropertyInformationNodeData)
+    .filter(([_nodeId, nodeData]) => nodeData["type"] === 12)
     .forEach(([propertyInfoNodeId, _propertyInfoNodeData]) => newFlowData[propertyInfoNodeId]["data"] = defaultPropertyInformationNodeData);
   return newFlowData;
 }
