@@ -52,11 +52,11 @@ ask.start();
 
           // Find DrawBoundary & PropertyInformation nodes in live flow data, update them
           //   This does NOT require a corresponding operation because we are not creating the flow for the first time
-          liveFlowData = updateDrawBoundaryNodeData(flow.data);
+          liveFlowData = updateDrawBoundaryNodeData(flow.data, flow.slug);
           liveFlowData = updatePropertyInformationNodeData(liveFlowData);
   
           // Find DrawBoundary & PropertyInformation nodes in published flow data, update them directly too
-          publishedFlowData = updateDrawBoundaryNodeData(flow.publishedFlows?.[0]?.data);
+          publishedFlowData = updateDrawBoundaryNodeData(flow.publishedFlows?.[0]?.data, flow.slug);
           publishedFlowData = updatePropertyInformationNodeData(publishedFlowData);
   
           // Write update in a single mutation block for postgres transaction-like rollback behavior on error
@@ -79,6 +79,9 @@ ask.start();
       } catch (error) {
         console.log(chalk.red(error));
       }
+
+      // wait 5 seconds before proceeding through next item in loop to avoid Hasura timeouts
+      await delay(5000);
     });
   } else {
     console.log(chalk.red(`Cannot find any flows matching slug: ${formattedSlug}. Exiting migration script`));
