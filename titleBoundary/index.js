@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const Client = require("../client");
 
 const { setupPrompts } = require("../prompts");
-const { updateDrawBoundaryNodeData, updatePropertyInformationNodeData } = require("./helpers");
+const { updateDrawBoundaryNodeData, updatePropertyInformationNodeData, delay } = require("./helpers");
 
 ask.start();
 
@@ -80,8 +80,8 @@ ask.start();
         console.log(chalk.red(error));
       }
 
-      // wait 5 seconds before proceeding through next item in loop to avoid Hasura timeouts
-      await delay(5000);
+      // wait 3.5 seconds before proceeding through next item in loop to avoid Hasura timeouts
+      await delay(3500);
     });
   } else {
     console.log(chalk.red(`Cannot find any flows matching slug: ${formattedSlug}. Exiting migration script`));
