@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start:fileNames": "node fileNames/index.js",
     "start:titleBoundary": "node titleBoundary/index.js",
     "precommit": "prettier --write **/*.js && git add ."
   },
