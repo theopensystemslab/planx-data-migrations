@@ -32,6 +32,24 @@ const updateUploadAndLabelNodeFns = (flowData) => {
   return newFlowData;
 }
 
+/**
+ * Find each TextInput (110) or DateInput (120) node in a flow (live or published) that asks about what a file contains and update its' passport variable (fn)
+ */
+const updateTextAndDateInputNodeFns = (flowData) => {
+  let newFlowData = flowData;
+  Object.entries(flowData)
+    .filter(([_nodeId, nodeData]) => nodeData["type"] === 110 || nodeData["type"] === 120)
+    .forEach(([inputNodeId, inputNodeData]) => {
+      const currentFn = inputNodeData["data"]["fn"];
+      existingFns.forEach((existingFn) => {
+        if (currentFn?.startsWith(existingFn)) {
+          newFlowData[inputNodeId]["data"]["fn"] = currentFn.replace(existingFn, filesNowToNext[existingFn]);
+        }
+      });
+    });
+  return newFlowData;
+}
+
 const filesNowToNext = {
   "applicant.disability.evidence": "disabilityExemptionEvidence",
   "property.drawing.elevation": "elevations.existing",
@@ -50,7 +68,7 @@ const filesNowToNext = {
   "proposal.document.contamination": "contaminationReport",
   "proposal.document.councilTaxBill": "councilTaxBill",
   "proposal.document.crimePreventionStrategy": "crimePreventionStrategy",
-  "proposal.document.declaration": "statuatoryDeclaration",
+  "proposal.document.declaration": "statutoryDeclaration",
   "proposal.document.designAndAccess": "designAndAccessStatement",
   "proposal.document.ecologyReport": "ecologyReport",
   "proposal.document.eia": "environmentalImpactAssessment",
@@ -115,4 +133,4 @@ const filesNowToNext = {
 
 const existingFns = Object.keys(filesNowToNext);
 
-module.exports = { updateUploadNodeFn, updateUploadAndLabelNodeFns };
+module.exports = { updateUploadNodeFn, updateUploadAndLabelNodeFns, updateTextAndDateInputNodeFns };
