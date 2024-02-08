@@ -62,7 +62,24 @@ class Client {
     if (errors || !data) throw new Error(formatJSON({ data, errors }));
     return { ...data };
   }
+
+  async updateFlow(flowId, liveFlowData) {
+    const { data, errors } = await this.graphQL(
+      `mutation UpdateFlow ($flowId: uuid!, $liveData: jsonb!) {
+        update_flows_by_pk(pk_columns: {id: $flowId}, _set: {data: $liveData}) {
+          id
+        }
+      }`,
+      {
+        flowId: flowId,
+        liveData: liveFlowData,
+      }
+    );
+    if (errors || !data) throw new Error(formatJSON({ data, errors }));
+    return { ...data };
+  }
 }
+
 
 function formatJSON({ data, errors }) {
   return JSON.stringify({ data, errors }, null, 2);
