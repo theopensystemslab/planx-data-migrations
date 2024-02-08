@@ -112,7 +112,7 @@ const filesNowToNext = {
   "proposal.document.treeCanopyCalculator": "treeCanopyCalculator",
   "proposal.document.treesReport": "treesReport",
   "proposal.document.utilitiesStatement": "utilitiesStatement",
-  "proposal.document.utility.bill": "utilitiesBill",
+  "proposal.document.utility.bill": "utilityBill",
   "proposal.document.ventilationStatement": "ventilationStatement",
   "proposal.document.waterAndRecyclingStrategy": "wasteAndRecyclingStrategy",
   "proposal.document.waterEnvironmentAssessment": "waterEnvironmentAssessment",
