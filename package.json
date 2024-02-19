@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:fileNames": "node fileNames/index.js",
     "start:titleBoundary": "node titleBoundary/index.js",
-    "start:findAndReplacePassportValue": "node findAndReplacePassportValue/index.js",
+    "start:passportValue": "node passportValue/index.js",
     "precommit": "prettier --write **/*.js && git add ."
   },
   "keywords": [],
