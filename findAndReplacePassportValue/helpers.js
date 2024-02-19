@@ -2,6 +2,11 @@
  * Find a current  passport variable (fn) or (val) and replace it in each node in a flow (live or published
  */
 
+function replaceAllOccurrences(fullPassportValue, currentPassportVariable, newPassportVariable) {
+  const regex = new RegExp('\\b' + currentPassportVariable + '\\b', 'g');
+  return fullPassportValue.replace(regex, newPassportVariable);
+}
+
 const updateNodeFn = (flowData, currentPassportVariable, newPassportVariable) => {
   let newFlowData = flowData;
   Object.entries(flowData)
@@ -9,13 +14,7 @@ const updateNodeFn = (flowData, currentPassportVariable, newPassportVariable) =>
     .forEach(([nodeId, nodeData]) => {
       const passportKey = nodeData["data"]["fn"] ? "fn" : "val"
       const currentFn = nodeData["data"][`${passportKey}`]
-      const currentValueSegments = currentFn.split(".")
-      const matchIndexPosition = currentValueSegments.indexOf(currentPassportVariable)
-      if (matchIndexPosition !==-1) {
-        currentValueSegments.splice(matchIndexPosition, 1, newPassportVariable)
-        const updatedPassportVariable = currentValueSegments.join(".")
-        newFlowData[nodeId]["data"][`${passportKey}`] = updatedPassportVariable
-      }
+      newFlowData[nodeId]["data"][`${passportKey}`] = replaceAllOccurrences(currentFn, currentPassportVariable, newPassportVariable)
     })
   return newFlowData;
 }
