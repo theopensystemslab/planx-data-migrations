@@ -37,7 +37,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
         publishedFlowData = updateFlowData(flow.publishedFlows?.[0]?.data);
         
         // Update in a single mutation block for postgres transaction-like rollback behavior on error
-        const publishedFlowResponse = await client.updateQueuedPublishedFlow(id, liveFlowData, flow.publishedFlows?.[0]?.id, publishedFlowData);
+        const publishedFlowResponse = await client.updateQueuedPublishedFlow(id, flowData, flow.publishedFlows?.[0]?.id, publishedFlowData);
         if (
           publishedFlowResponse?.update_flows_by_pk?.id &&
           publishedFlowResponse?.update_published_flows_by_pk?.id &&
