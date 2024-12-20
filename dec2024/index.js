@@ -70,6 +70,12 @@ const updateFlowData = (flowData) => {
       console.log(`${timestamp} Updated project type value`);
     }
 
+    // Help text
+    if (nodeData?.["data"]?.["policyRef"]?.includes("/made")) {
+      newFlowData[nodeId]["data"]["policyRef"] = nodeData["data"]["policyRef"].replaceAll("/made", "");
+      console.log(`${timestamp} Updated help text policy reference link`);
+    }
+
     // About the property
     if (nodeData?.["type"] === 12) {
       newFlowData[nodeId]["data"] = defaultPropertyInformationNodeData;
@@ -81,6 +87,29 @@ const updateFlowData = (flowData) => {
       newFlowData[nodeId]["data"]["fn"] = nodeData["data"]["output"];
       delete newFlowData[nodeId]["data"]["output"];
       console.log(`${timestamp} Updated Calculate prop`);
+    }
+
+    // DrawBoundary props
+    if (nodeData?.["type"] === 10 && nodeData?.["data"]?.["dataFieldBoundary"]) {
+      newFlowData[nodeId]["data"]["fn"] = "proposal.site";
+      delete newFlowData[nodeId]["data"]["dataFieldBoundary"];
+      delete newFlowData[nodeId]["data"]["dataFieldArea"];      
+      console.log(`${timestamp} Updated DrawBoundary props`);
+    }
+
+    // Filter Options / Answers flag prop
+    if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["flag"]) {
+      const currentFlagValue = nodeData["data"]["flag"];
+      if (typeof currentFlagValue === "string") {
+        // Legacy nodes are still string values
+        newFlowData[nodeId]["data"]["flags"] = [currentFlagValue];
+        delete newFlowData[nodeId]["data"]["flag"];
+      } else {
+        // New nodes are already arrays
+        newFlowData[nodeId]["data"]["flags"] = currentFlagValue;
+        delete newFlowData[nodeId]["data"]["flag"];
+      }
+      console.log(`${timestamp} Updated Answer flags prop`);
     }
   });
 
