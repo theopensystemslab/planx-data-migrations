@@ -27,17 +27,17 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
 
   if (id) {
     try {
+      // Update live flow data
       console.log(`${timestamp} Updating flow ${flowSlug}`);
-      let flowData;
-      flowData = updateFlowData(flow.data);
+      const { flowData, logs: liveLogs } = updateFlowData(flow.data);
 
+      // If published, update latest published version
       if (flow.publishedFlows?.length > 0) {
         console.log(`${timestamp} Updating published flow ${flowSlug}`);
-        let publishedFlowData;
-        publishedFlowData = updateFlowData(flow.publishedFlows?.[0]?.data);
+        const { flowData: publishedFlowData, logs: publishedLogs } = updateFlowData(flow.publishedFlows?.[0]?.data, true);
         
         // Update in a single mutation block for postgres transaction-like rollback behavior on error
-        const publishedFlowResponse = await client.updateQueuedPublishedFlow(id, flowData, flow.publishedFlows?.[0]?.id, publishedFlowData);
+        const publishedFlowResponse = await client.updateQueuedPublishedFlow(id, flowData, flow.publishedFlows?.[0]?.id, publishedFlowData, liveLogs.concat(publishedLogs));
         if (
           publishedFlowResponse?.update_flows_by_pk?.id &&
           publishedFlowResponse?.update_published_flows_by_pk?.id &&
@@ -46,13 +46,18 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           console.log(`${timestamp} Successfully updated ${flowSlug} - live flow, published flow, and audit table`);
         }
       } else {
-        const flowResponse = await client.updateQueuedFlow(id, flowData);
+        const flowResponse = await client.updateQueuedFlow(id, flowData, liveLogs);
         if (
           flowResponse?.update_flows_by_pk?.id &&
           flowResponse?.update_temp_data_migrations_audit_by_pk?.flow_id
         ) {
           console.log(`${timestamp} Successfully updated ${flowSlug} - live flow and audit table only, not published`);
         }
+      }
+
+      // If has associated active sessions, update breadcrumb data
+      if (flow.lowcalSessions?.length > 0) {
+        console.log(`${timestamp} TODO Update ${flow.lowcalSessions?.length} session breadcrumbs`);
       }
     } catch (error) {
       console.log(chalk.red(`Error: ${error}`));
@@ -61,32 +66,35 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
 })();
 
 // Follows details outlined in gsheet here https://docs.google.com/spreadsheets/d/1Vtxp5BLweDPDooQoNhgOCYjCIBPRYIcOuyArGJRqOkI/edit?gid=0#gid=0
-const updateFlowData = (flowData) => {
+const updateFlowData = (flowData, published = false) => {
   let newFlowData = flowData;
+  let logs = "";
+
   Object.entries(flowData).forEach(([nodeId, nodeData]) => {
     // Project type schema
     if (nodeData?.["data"]?.["val"] === "changeofUse.annexe") {
       newFlowData[nodeId]["data"]["val"] = "changeOfUse.annexe";
-      console.log(`${timestamp} Updated project type value`);
+      logs += `${timestamp} Updated project type value (${published ? 'published flow node' : 'node'} ${nodeId}); `;
     }
 
     // Help text
-    if (nodeData?.["data"]?.["policyRef"]?.includes("/made")) {
+    const policyRef = nodeData?.["data"]?.["policyRef"];
+    if (policyRef?.includes("legislation.gov.uk") && policyRef?.endsWith("/made")) {
       newFlowData[nodeId]["data"]["policyRef"] = nodeData["data"]["policyRef"].replaceAll("/made", "");
-      console.log(`${timestamp} Updated help text policy reference link`);
+      logs += `${timestamp} Updated help text policy reference link (node ${nodeId}); `;
     }
 
     // About the property
     if (nodeData?.["type"] === 12) {
       newFlowData[nodeId]["data"] = defaultPropertyInformationNodeData;
-      console.log(`${timestamp} Updated PropertyInformation content`);
+      logs += `${timestamp} Updated PropertyInformation content (node ${nodeId}); `;
     }
 
     // Calculate prop
     if (nodeData?.["type"] === 700 && nodeData?.["data"]?.["output"]) {
       newFlowData[nodeId]["data"]["fn"] = nodeData["data"]["output"];
       delete newFlowData[nodeId]["data"]["output"];
-      console.log(`${timestamp} Updated Calculate prop`);
+      logs += `${timestamp} Updated Calculate prop (node ${nodeId}); `;
     }
 
     // DrawBoundary props
@@ -94,7 +102,7 @@ const updateFlowData = (flowData) => {
       newFlowData[nodeId]["data"]["fn"] = "proposal.site";
       delete newFlowData[nodeId]["data"]["dataFieldBoundary"];
       delete newFlowData[nodeId]["data"]["dataFieldArea"];      
-      console.log(`${timestamp} Updated DrawBoundary props`);
+      logs += `${timestamp} Updated DrawBoundary props (node ${nodeId}); `;
     }
 
     // Filter Options / Answers flag prop
@@ -105,15 +113,18 @@ const updateFlowData = (flowData) => {
         newFlowData[nodeId]["data"]["flags"] = [currentFlagValue];
         delete newFlowData[nodeId]["data"]["flag"];
       } else {
-        // New nodes are already arrays
+        // New nodes are already arrays, but prop name needs to be made plural
         newFlowData[nodeId]["data"]["flags"] = currentFlagValue;
         delete newFlowData[nodeId]["data"]["flag"];
       }
-      console.log(`${timestamp} Updated Answer flags prop`);
+      logs += `${timestamp} Updated Answer flags prop (node ${nodeId}); `;
     }
   });
 
-  return newFlowData;
+  return {
+    flowData: newFlowData, 
+    logs: logs 
+  };
 }
 
 const defaultPropertyInformationNodeData = {
