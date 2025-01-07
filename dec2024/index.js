@@ -56,9 +56,9 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
       }
 
       // If has associated active sessions, update breadcrumb data
-      if (flow.lowcalSessions?.length > 0) {
-        console.log(`${timestamp} TODO Update ${flow.lowcalSessions?.length} session breadcrumbs`);
-      }
+      // if (flow.lowcalSessions?.length > 0) {
+      //   console.log(`${timestamp} TODO Update ${flow.lowcalSessions?.length} session breadcrumbs`);
+      // }
     } catch (error) {
       console.log(chalk.red(`Error: ${error}`));
     }
