@@ -1,3 +1,14 @@
+const { describe, it } = require("node:test");
+const assert = require("node:assert/strict");
+const { migrateSessionData } = require("./../helpers");
+
+describe("migrate session data function", () => {
+  it("#returns the expected data", () => {
+    const migratedSession = migrateSessionData(oldSession);
+    assert.deepStrictEqual(migratedSession, expectedSession);
+  });
+});
+
 const expectedSession = {
   "id": "flow-id-123",
   "passport": {

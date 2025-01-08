@@ -55,8 +55,6 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
         flow.sessions.forEach((session) => {
           console.log(`${timestamp} Updating session ${session.id} (${flowSlug})`);
           const { sessionData } = migrateSessionData(session.data);
-
-          const sessionResponse = null;
         });
       } else if (isPublished) {
         // Update published flow data

@@ -69,8 +69,6 @@ const defaultPropertyInformationNodeData = {
 };
 
 const migrateSessionData = (sessionData) => {
-  const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}]`;
-
   const newsessionData = sessionData;
 
   const passportData = sessionData?.passport?.data;
@@ -94,7 +92,6 @@ const migrateSessionData = (sessionData) => {
       delete newsessionData["passport"]["data"][drawBoundaryChanges[currentDataField]];
 
       // Update breadcrumbs
-
     }
   });
 

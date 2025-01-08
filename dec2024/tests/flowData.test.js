@@ -34,7 +34,7 @@ const expectedFlow = {
     "data": {
       "title": "About the property",
       "description": "<p>This is the information we currently have about the property.</p><p>The blue line shows the <strong>outline</strong> of the property (known as the title boundary). If this looks incorrect, go back a step and <strong>check you have selected the correct address</strong>.</p><p>We use this outline to create the site boundary where the project will take place. If your project covers a different area, you can change or redraw the site boundary on the next page.</p>",
-      "showPropertyTypeOverride": false
+      "showPropertyTypeOverride": true,
     }
   },
   "DrawBoundary": {
@@ -123,7 +123,7 @@ const oldFlow = {
     "data": {
       "title": "About the property",
       "description": "This is the information we currently have about the property, including its title boundary shown in blue from the Land Registry",
-      "showPropertyTypeOverride": false
+      "showPropertyTypeOverride": false,
     }
   },
   "DrawBoundary": {

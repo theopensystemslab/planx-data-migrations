@@ -38,6 +38,17 @@ class Client {
               id  
               data
             }
+            sessions: lowcal_sessions(
+              where: {
+                locked_at: {_is_null: true},
+                submitted_at: {_is_null: true}, 
+                sanitised_at: {_is_null: true},
+                deleted_at: {_is_null: true}
+              }
+            ) {
+              id
+              data
+            }
           }
         }
       }`
