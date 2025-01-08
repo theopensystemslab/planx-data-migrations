@@ -727,7 +727,7 @@ const expectedSession = {
         "Answer"
       ]
     }
-  },
+  }
 };
 
 const oldSession = {
@@ -1448,5 +1448,5 @@ const oldSession = {
         "Answer"
       ]
     }
-  },
+  }
 };

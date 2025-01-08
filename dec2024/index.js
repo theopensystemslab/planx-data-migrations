@@ -27,7 +27,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
 
   if (id) {
     try {
-      // There's 3 scenarios here": a flow is published & has active sessions, a flow is only published with no sessions, and a flow is unpublished
+      // There's 3 scenarios here: a flow is published & has active sessions, a flow is only published with no sessions, and a flow is unpublished
       //   We're assuming an unpublished flow will never have associated active sessions because it's not publicly accessible
       const isPublished = flow.publishedFlows?.length > 0;
       const isPublishedWithSessions = isPublished && flow.sessions?.length > 0;
@@ -48,13 +48,20 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           publishedFlowResponse?.update_published_flows_by_pk?.id &&
           publishedFlowResponse?.update_temp_data_migrations_audit_by_pk?.flow_id
         ) {
-          console.log(`${timestamp} Successfully updated published ${flowSlug}`);
+          console.log(`${timestamp} Successfully updated flow and published flow ${flowSlug}`);
         }
 
-        // Iterate through sessions and update them individually
-        flow.sessions.forEach((session) => {
+        // Iterate through sessions and update them individually (single mutation doesn't matter here?)
+        flow.sessions.forEach(async (session) => {
           console.log(`${timestamp} Updating session ${session.id} (${flowSlug})`);
-          const { sessionData } = migrateSessionData(session.data);
+          const sessionData = migrateSessionData(session.data);
+          
+          const sessionDataResponse = await client.updateSessionData(session.id, sessionData);
+          if (
+            sessionDataResponse?.update_lowcal_sessions_by_pk?.id
+          ) {
+            console.log(`${timestamp} Successfully updated session ${session.id} (${flowSlug})`);
+          }
         });
       } else if (isPublished) {
         // Update published flow data
@@ -68,7 +75,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           publishedFlowResponse?.update_published_flows_by_pk?.id &&
           publishedFlowResponse?.update_temp_data_migrations_audit_by_pk?.flow_id
         ) {
-          console.log(`${timestamp} Successfully updated published ${flowSlug}`);
+          console.log(`${timestamp} Successfully updated flow and published flow ${flowSlug}`);
         }
       } else {
         // Write to database
@@ -77,7 +84,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           flowResponse?.update_flows_by_pk?.id &&
           flowResponse?.update_temp_data_migrations_audit_by_pk?.flow_id
         ) {
-          console.log(`${timestamp} Successfully updated unpublished ${flowSlug}`);
+          console.log(`${timestamp} Successfully updated unpublished flow ${flowSlug}`);
         }
       }
     } catch (error) {

@@ -74,24 +74,30 @@ const migrateSessionData = (sessionData) => {
   const passportData = sessionData?.passport?.data;
   const breadcrumbs = sessionData?.breadcrumbs;
 
-  // "current"": "proposed"
+  // "current": "proposed"
   const drawBoundaryChanges = {
-    "property.boundary.title": "property.boundary",
-    "property.boundary.title.area": "property.boundary.area",
-    "property.boundary.title.area.hectares": "property.boundary.area.hectares",
     "property.boundary.site": "proposal.site",
     "property.boundary.site.buffered": "proposal.site.buffered",
     "property.boundary.area": "proposal.site.area",
-    "property.boundary.area.hectares": "proposal.site.area.hectares"
+    "property.boundary.area.hectares": "proposal.site.area.hectares",
+    "property.boundary.title": "property.boundary",
+    "property.boundary.title.area": "property.boundary.area",
+    "property.boundary.title.area.hectares": "property.boundary.area.hectares",
   };
 
   Object.keys(drawBoundaryChanges).forEach((currentDataField) => {
     if (Object.keys(passportData).includes(currentDataField)) {
       // Update passport keys
       newsessionData["passport"]["data"][drawBoundaryChanges[currentDataField]] = passportData[currentDataField];
-      delete newsessionData["passport"]["data"][drawBoundaryChanges[currentDataField]];
+      delete newsessionData["passport"]["data"][currentDataField];
 
       // Update breadcrumbs
+      Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
+        if (crumb.data?.hasOwnProperty(currentDataField)) {
+          newsessionData["breadcrumbs"][nodeId]["data"][drawBoundaryChanges[currentDataField]] = crumb.data[currentDataField];
+          delete newsessionData["breadcrumbs"][nodeId]["data"][currentDataField];
+        }
+      });
     }
   });
 

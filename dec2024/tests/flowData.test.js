@@ -123,7 +123,7 @@ const oldFlow = {
     "data": {
       "title": "About the property",
       "description": "This is the information we currently have about the property, including its title boundary shown in blue from the Land Registry",
-      "showPropertyTypeOverride": false,
+      "showPropertyTypeOverride": false
     }
   },
   "DrawBoundary": {
@@ -169,7 +169,7 @@ const oldFlow = {
     "data": {
       "text": "Change of use",
       "val": "changeofUse.annexe",
-      "flag": "NO_APP_REQUIRED",
+      "flag": "NO_APP_REQUIRED"
     }
   },
   "Calculate": {
