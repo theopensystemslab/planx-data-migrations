@@ -51,16 +51,24 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           console.log(`${timestamp} Successfully updated flow and published flow ${flowSlug}`);
         }
 
-        // Iterate through sessions and update them individually (single mutation doesn't matter here?)
+        // Iterate through sessions and update them individually if they have a DrawBoundary breadcrumb
         flow.sessions.forEach(async (session) => {
-          console.log(`${timestamp} Updating session ${session.id} (${flowSlug})`);
-          const sessionData = migrateSessionData(session.data);
-          
-          const sessionDataResponse = await client.updateSessionData(session.id, sessionData);
-          if (
-            sessionDataResponse?.update_lowcal_sessions_by_pk?.id
-          ) {
-            console.log(`${timestamp} Successfully updated session ${session.id} (${flowSlug})`);
+          const drawBoundaryNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 10)?.[0];
+          const hasDrawBoundaryBreadcrumb = Object.keys(session.data?.breadcrumbs).includes(drawBoundaryNodeId);
+
+          if (hasDrawBoundaryBreadcrumb) {
+            console.log(`${timestamp} Updating session ${session.id} (${flowSlug})`);
+            const sessionData = migrateSessionData(session.data);
+
+            // Write session data to database
+            const sessionDataResponse = await client.updateSessionData(session.id, sessionData);
+            if (
+              sessionDataResponse?.update_lowcal_sessions_by_pk?.id
+            ) {
+              console.log(`${timestamp} Successfully updated session ${session.id} (${flowSlug})`);
+            }
+          } else {
+            console.log(`${timestamp} Skipping session without DrawBoundary breadcrumb ${session.id} (${flowSlug})`);
           }
         });
       } else if (isPublished) {
