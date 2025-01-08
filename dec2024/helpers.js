@@ -85,17 +85,17 @@ const migrateSessionData = (sessionData) => {
     "property.boundary.title.area.hectares": "property.boundary.area.hectares",
   };
 
-  Object.keys(drawBoundaryChanges).forEach((currentDataField) => {
-    if (Object.keys(passportData).includes(currentDataField)) {
+  Object.entries(drawBoundaryChanges).forEach(([current, proposed]) => {
+    if (Object.keys(passportData).includes(current)) {
       // Update passport keys
-      newsessionData["passport"]["data"][drawBoundaryChanges[currentDataField]] = passportData[currentDataField];
-      delete newsessionData["passport"]["data"][currentDataField];
+      newsessionData["passport"]["data"][proposed] = passportData[current];
+      delete newsessionData["passport"]["data"][current];
 
       // Update breadcrumbs
       Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
-        if (crumb.data?.hasOwnProperty(currentDataField)) {
-          newsessionData["breadcrumbs"][nodeId]["data"][drawBoundaryChanges[currentDataField]] = crumb.data[currentDataField];
-          delete newsessionData["breadcrumbs"][nodeId]["data"][currentDataField];
+        if (crumb.data?.hasOwnProperty(current)) {
+          newsessionData["breadcrumbs"][nodeId]["data"][proposed] = crumb.data[current];
+          delete newsessionData["breadcrumbs"][nodeId]["data"][current];
         }
       });
     }

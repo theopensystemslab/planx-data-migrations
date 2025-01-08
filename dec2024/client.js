@@ -118,11 +118,6 @@ class Client {
     if (errors || !data) throw new Error(formatJSON({ data, errors }));
     return {...data};
   }
-
-  async updateAuditTable(flowId, logs) {
-    // TODO
-    return null;
-  };
 }
 
 function formatJSON({ data, errors }) {
