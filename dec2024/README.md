@@ -1,6 +1,8 @@
 ## December 2024
 
-https://docs.google.com/spreadsheets/d/1Vtxp5BLweDPDooQoNhgOCYjCIBPRYIcOuyArGJRqOkI/edit?gid=0#gid=0
+Unlike previous scripts in this directory, this script updates a number of unrelated variables across flow data at the same time. These are outlined in this googlesheet: https://docs.google.com/spreadsheets/d/1Vtxp5BLweDPDooQoNhgOCYjCIBPRYIcOuyArGJRqOkI/edit?gid=0#gid=0
+
+It also facilitates updating _every_ flow across PlanX rather than first prompting for a team or service slug.
 
 ### Running script
 
