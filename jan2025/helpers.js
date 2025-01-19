@@ -13,6 +13,7 @@ const migrateFlowData = (flowData) => {
         newFlowData[nodeId]["data"]["flags"] = nodeData["data"]["flags"].map(current =>
           flagChanges[current]
         );
+        logs += `${timestamp} Updated Question or Checklist flags (node ${nodeId}); `;
       }
 
       // Filter options with flag as `val`
@@ -20,20 +21,28 @@ const migrateFlowData = (flowData) => {
       if (current && Object.keys(flagChanges).includes(current)) {
         const proposed = flagChanges[current];
         newFlowData[nodeId]["data"]["val"] = proposed;
+
+        // Some flags also get updated `text`
         if (proposed.endsWith(".consentNeeded")) {
           newFlowData[nodeId]["data"]["text"] = "Consent needed";
         }
+        if (proposed === "flag.wtt.notice") {
+          newFlowData[nodeId]["data"]["text"] = "Notice";
+        }
+        logs += `${timestamp} Updated Filter option flags (node ${nodeId}); `;
       }
     }
 
     // Filter flagset category change
     if (nodeData?.["type"] === 500 && nodeData?.["data"]?.["category"] === "Listed building consent") {
       newFlowData[nodeId]["data"]["category"] = "Works to listed buildings";
+      logs += `${timestamp} Updated Filter category (node ${nodeId}); `;
     }
 
     // Article 4s (options and selectable planning constraints)
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"]?.startsWith("article4")) {
       newFlowData[nodeId]["data"]["val"] = nodeData["data"]["val"].replace("article4", "articleFour");
+      logs += `${timestamp} Updated article4 option val (node ${nodeId}); `;
     }
 
     if (
@@ -43,18 +52,21 @@ const migrateFlowData = (flowData) => {
       newFlowData[nodeId]["data"]["dataValues"] = nodeData["data"]["dataValues"].map(
         current => current.startsWith("article4") ? current.replace("article4", "articleFour") : current
       );
+      logs += `${timestamp} Updated planning constraints selectable data values (node ${nodeId}); `;
     }
 
     // Listed building grades (options only)
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"]?.startsWith("listed.")) {
       const current = nodeData["data"]["val"];
       newFlowData[nodeId]["data"]["val"] = listedGradeChanges[current];
+      logs += `${timestamp} Updated listed building grade option val (node ${nodeId}); `;
     }
 
     // Flood risk zones (options only)
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"]?.startsWith("flood.")) {
       const current = nodeData["data"]["val"];
       newFlowData[nodeId]["data"]["val"] = floodZoneChanges[current];
+      logs += `${timestamp} Updated flood risk zone option val (node ${nodeId}); `;
     }
 
     // Property types (option or setvalue type)
@@ -69,12 +81,13 @@ const migrateFlowData = (flowData) => {
 
     // Lingering draw boundary props in calculate formulas and defaults
     if (nodeData?.["type"] === 700) {
-      Object.keys(nodeData?.["data"]?.["defaults"]).map((current) => {
+      Object.keys(nodeData?.["data"]?.["defaults"] || {})?.map((current) => {
         if (Object.keys(drawBoundaryChanges).includes(current)) {
           const proposed = drawBoundaryChanges[current];
           newFlowData[nodeId]["data"]["defaults"][proposed] = nodeData["data"]["defaults"][current];
           delete newFlowData[nodeId]["data"]["defaults"][current];
           newFlowData[nodeId]["data"]["formula"] = nodeData["data"]["formula"].replaceAll(current, proposed);
+          logs += `${timestamp} Updated Calculate formula and defaults (node ${nodeId}); `;
         }
       });
     }
