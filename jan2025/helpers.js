@@ -1,4 +1,4 @@
-// Follows details outlined in gsheet here https"://docs.google.com/spreadsheets/d/1Vtxp5BLweDPDooQoNhgOCYjCIBPRYIcOuyArGJRqOkI/edit?gid=0#gid=0
+// Follows details outlined in gsheet here https://docs.google.com/spreadsheets/d/1Vtxp5BLweDPDooQoNhgOCYjCIBPRYIcOuyArGJRqOkI/edit?gid=0#gid=0
 const migrateFlowData = (flowData) => {
   const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}]`;
 
@@ -57,11 +57,19 @@ const migrateFlowData = (flowData) => {
       newFlowData[nodeId]["data"]["val"] = floodZoneChanges[current];
     }
 
-    // Property types
+    // Property types (option or setvalue type)
+    if (
+      nodeData?.["data"]?.["val"] && 
+      Object.keys(propertyTypeChanges).includes(nodeData["data"]["val"])
+    ) {
+      const current = nodeData["data"]["val"];
+      newFlowData[nodeId]["data"]["val"] = propertyTypeChanges[current];
+      logs += `${timestamp} Updated property type value (node ${nodeId}); `
+    }
 
-    // Draw boundary props in Calculate formulas
+    // Lingering draw boundary props in calculate formulas and defaults
 
-    // Overflow project types
+    // Lingering project types
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"] && Object.keys(projectTypeChanges).includes(nodeData["data"]["val"])) {
       const current = nodeData["data"]["val"];
       newFlowData[nodeId]["data"]["val"] = projectTypeChanges[current];
@@ -160,6 +168,106 @@ const floodZoneChanges = {
 
 const projectTypeChanges = {
   "ChangeOfUse": "changeOfUse",
+  "alter.deck": "alter.decks",
+  "alter.internal.mezzanine": "internal.mezzanine",
+  "alter.internal.loft": "internal.loft",
+};
+
+// See https://docs.google.com/spreadsheets/d/1P_MjwuJlTshSsz1-9yLjBtZOqim93y31AGglturIaJA/edit?gid=0#gid=0
+const propertyTypeChanges = {
+  "commercial.abattoir": "commercial.industrial.abattoir",
+  "commercial.ancilliary": "commercial",
+  "commercial.community.CCTV": "commercial.utility.CCTV",
+  "commercial.community.cemetary": "commercial.community.cemetery",
+  "commercial.community.cemetary.cemetary": "commercial.community.cemetery.cemetery",
+  "commercial.community.cemetary.chapelOfRest": "commercial.community.cemetery.chapelOfRest",
+  "commercial.community.cemetary.columbarium": "commercial.community.cemetery.columbarium",
+  "commercial.community.cemetary.columbarium": "commercial.community.cemetery.columbarium",
+  "commercial.community.cemetary.crematorium": "commercial.community.cemetery.crematorium",
+  "commercial.community.cemetary.military": "commercial.community.cemetery.military",
+  "commercial.education.secondarySchool": "commercial.education.school.secondary",
+  "commercial.education.secondarySchool.private": "commercial.education.school.secondary.private",
+  "commercial.education.secondarySchool.state": "commercial.education.school.secondary.state",
+  "commercial.fish.processing": "commercial.industrial.fishProcessing",
+  "commercial.horticulture": "commercial.agriculture.horticulture",
+  "commercial.horticulture.smallholding": "land.smallholding",
+  "commercial.horticulture.vineyard": "commercial.agriculture.horticulture.vineyard",
+  "commercial.horticulture.watercress": "commercial.agriculture.horticulture.watercress",
+  "commercial.industrial.distribution": "commercial.storage.distribution",
+  "commercial.industrial.distribution.solidFueld": "commercial.storage.distribution.solidFuel",
+  "commercial.industrial.distribution.timber": "commercial.storage.distribution.timber",
+  "commercial.industrial.light.storage": "commercial.storage",
+  "commercial.industrial.light.storage.crops": "commercial.storage.crops",
+  "commercial.industrial.light.storage.solidFuel": "commercial.storage.solidFuel",
+  "commercial.industrial.light.storage.timber": "commercial.storage.timber",
+  "commercial.information": "other.information",
+  "commercial.information.advertising": "other.information.advertising",
+  "commercial.information.tourist.sign": "other.information.touristSign",
+  "commercial.information.tourist.visitor": "commercial.retail.visitorInformation",
+  "commercial.information.traffic.sign": "other.information.trafficSign",
+  "commercial.leisure.sport.historicVehicles": "commercial.leisure.museum.historicVehicles",
+  "commercial.medical.care.home": "commercial.medical.careHome",
+  "commercial.medical.care.hospital": "commercial.medical.hospital",
+  "commercial.retail.atm": "commercial.utility.atm",
+  "commercial.storageLand": "commercial.storage.land",
+  "commercial.storageLand.building": "commercial.industrial.buildersYard",
+  "commercial.storageLand.general": "commercial.storage.land.general",
+  "commercial.transport.bus": "commercial.transport.road.bus",
+  "commercial.transport.dock": "commercial.transport.water.dock",
+  "commercial.transport.dock.ferry.passengers": "commercial.transport.water.dock.ferry.passengers",
+  "commercial.transport.dock.ferry.vehicles": "commercial.transport.water.dock.ferry.vehicles",
+  "commercial.transport.dock.generalBerth": "commercial.transport.water.dock.generalBerth",
+  "commercial.transport.dock.refuelling": "commercial.transport.water.dock.refuelling",
+  "commercial.transport.dock.slipway": "commercial.transport.water.dock.slipway",
+  "commercial.transport.dock.slipway": "commercial.transport.water.dock.passenger",
+  "commercial.transport.dock.tankerBerth": "commercial.transport.water.dock.tankerBerth",
+  "commercial.transport.infrastructure.aqueduct": "commercial.transport.water.infrastructure.aqueduct",
+  "commercial.transport.infrastructure.lock": "commercial.transport.water.infrastructure.lock",
+  "commercial.transport.infrastructure.weighing": "commercial.transport.road.infrastructure.weighing",
+  "commercial.transport.infrastructure.weir": "commercial.transport.water.infrastructure.weir",
+  "commercial.transport.marina": "commercial.transport.water.marina",
+  "commercial.transport.mooring": "commercial.transport.water.mooring",
+  "commercial.transport.overnightLorryPark": "commercial.transport.road.overnightLorryPark",
+  "commercial.transport.parking": "commercial.transport.road.parking",
+  "commercial.transport.parking.car": "commercial.transport.road.parking.car",
+  "commercial.transport.parking.coach": "commercial.transport.road.parking.coach",
+  "commercial.transport.parking.commercialVehicle": "commercial.transport.road.parking.commercialVehicle",
+  "commercial.transport.parking.parkAndRide": "commercial.transport.road.parking.parkAndRide",
+  "commercial.transport.railAsset": "commercial.transport.rail.railAsset",
+  "commercial.transport.storage": "commercial.storage.transport",
+  "commercial.transport.storage.boat": "commercial.storage.transport.boat",
+  "commercial.transport.storage.bus": "commercial.storage.transport.bus",
+  "commercial.transport.terminal.bus": "commercial.transport.road.terminal.bus",
+  "commercial.transport.terminal.train": "commercial.transport.rail.terminal",
+  "commercial.transport.terminal.vehicularRail": "commercial.transport.rail.terminal",
+  "commercial.transport.track": "commercial.transport.rail.track",
+  "commercial.transport.track.cliff": "commercial.transport.rail.track",
+  "commercial.transport.track.monorail": "commercial.transport.rail.monorail",
+  "land.agriculture": "commercial.agriculture.land",
+  "land.agriculture.crops": "commercial.agriculture.land.crops",
+  "land.agriculture.grazing": "commercial.agriculture.land.grazing",
+  "land.agriculture.orchard": "commercial.agriculture.land.orchard",
+  "land.building": "other.ancillary",
+  "land.building.aviary": "other.ancillary.aviary",
+  "land.building.bandstand": "other.ancillary.bandstand",
+  "land.building.pavilion": "other.ancillary.pavilion",
+  "land.building.sportsViewing": "other.ancillary.sportsViewing",
+  "residential.dwelling": "residential",
+  "residential.dwelling.boat": "residential.boat",
+  "residential.dwelling.caravan": "residential.caravan",
+  "residential.dwelling.flat": "residential.flat",
+  "residential.dwelling.flat.multiple": "residential.multiple",
+  "residential.dwelling.holiday": "residential.holiday",
+  "residential.dwelling.house": "residential.house",
+  "residential.dwelling.house.detached": "residential.house.detached",
+  "residential.dwelling.house.multiple": "residential.multiple",
+  "residential.dwelling.house.semiDetached": "residential.house.semiDetached",
+  "residential.dwelling.house.terrace": "residential.house.terrace",
+  "residential.dwelling.house.terrace.end": "residential.house.terrace.end",
+  "residential.dwelling.house.terrace.mid": "residential.house.terrace.mid",
+  "residential.dwelling.liveWork": "residential.liveWork",
+  "residential.dwelling.shelteredAccommodation": "residential.shelteredAccommodation",
+  "residential.HMO.student": "residential.student",
 };
 
 module.exports = { migrateFlowData, migrateSessionData };
