@@ -40,10 +40,8 @@ class Client {
             }
             sessions: lowcal_sessions(
               where: {
-                locked_at: {_is_null: true},
-                submitted_at: {_is_null: true}, 
-                sanitised_at: {_is_null: true},
-                deleted_at: {_is_null: true}
+                created_at: {_gte: "2024-12-20"}, 
+                _or: {submitted_at: {_gte: "2024-12-20"}
               }
             ) {
               id

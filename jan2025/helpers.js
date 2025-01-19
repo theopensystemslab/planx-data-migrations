@@ -68,6 +68,16 @@ const migrateFlowData = (flowData) => {
     }
 
     // Lingering draw boundary props in calculate formulas and defaults
+    if (nodeData?.["type"] === 700) {
+      Object.keys(nodeData?.["data"]?.["defaults"]).map((current) => {
+        if (Object.keys(drawBoundaryChanges).includes(current)) {
+          const proposed = drawBoundaryChanges[current];
+          newFlowData[nodeId]["data"]["defaults"][proposed] = nodeData["data"]["defaults"][current];
+          delete newFlowData[nodeId]["data"]["defaults"][current];
+          newFlowData[nodeId]["data"]["formula"] = nodeData["data"]["formula"].replaceAll(current, proposed);
+        }
+      });
+    }
 
     // Lingering project types
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"] && Object.keys(projectTypeChanges).includes(nodeData["data"]["val"])) {
@@ -89,32 +99,95 @@ const migrateSessionData = (sessionData) => {
   const passportData = sessionData?.passport?.data;
   const breadcrumbs = sessionData?.breadcrumbs;
 
-  // // "current": "proposed"
-  // const drawBoundaryChanges = {
-  //   "property.boundary.site": "proposal.site",
-  //   "property.boundary.site.buffered": "proposal.site.buffered",
-  //   "property.boundary.area": "proposal.site.area",
-  //   "property.boundary.area.hectares": "proposal.site.area.hectares",
-  //   "property.boundary.title": "property.boundary",
-  //   "property.boundary.title.area": "property.boundary.area",
-  //   "property.boundary.title.area.hectares": "property.boundary.area.hectares",
-  // };
+  // Property types
+  if (Object.keys(passportData).includes("property.type")) {
+    newsessionData["passport"]["data"]["property.type"] = passportData["property.type"].map(
+      (current) => Object.keys(propertyTypeChanges).includes(current) ? propertyTypeChanges[current] : current
+    );
 
-  // Object.entries(drawBoundaryChanges).forEach(([current, proposed]) => {
-  //   if (Object.keys(passportData).includes(current)) {
-  //     // Update passport keys
-  //     newsessionData["passport"]["data"][proposed] = passportData[current];
-  //     delete newsessionData["passport"]["data"][current];
+    Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
+      if (crumb.data?.hasOwnProperty("property.type")) {
+        newsessionData["breadcrumbs"][nodeId]["data"]["property.type"] = crumb["data"]["property.type"].map(
+          (current) => Object.keys(propertyTypeChanges).includes(current) ? propertyTypeChanges[current] : current
+        );
+      }
+    });
+  }
 
-  //     // Update breadcrumbs
-  //     Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
-  //       if (crumb.data?.hasOwnProperty(current)) {
-  //         newsessionData["breadcrumbs"][nodeId]["data"][proposed] = crumb.data[current];
-  //         delete newsessionData["breadcrumbs"][nodeId]["data"][current];
-  //       }
-  //     });
-  //   }
-  // });
+  // Planning constraints (including `_constraints` audit key)
+  const combinedConstraintChanges = {...listedGradeChanges, ...floodZoneChanges};
+  if (Object.keys(passportData).includes("property.constraints.planning") || Object.keys(passportData).includes("_nots")) {
+    newsessionData["passport"]["data"]["property.constraints.planning"] = passportData?.["property.constraints.planning"]?.map(
+      (current) => Object.keys(combinedConstraintChanges).includes(current) ? combinedConstraintChanges[current] : current.replaceAll("article4", "articleFour")
+    );
+    newsessionData["passport"]["data"]["_nots"]["property.constraints.planning"] = passportData?.["_nots"]?.["property.constraints.planning"]?.map(
+      (current) => Object.keys(combinedConstraintChanges).includes(current) ? combinedConstraintChanges[current] : current.replaceAll("article4", "articleFour")
+    );
+
+    Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
+      if (crumb.data?.hasOwnProperty("property.constraints.planning")) {
+        newsessionData["breadcrumbs"][nodeId]["data"]["property.constraints.planning"] = crumb["data"]["property.constraints.planning"].map(
+          (current) => Object.keys(combinedConstraintChanges).includes(current) ? combinedConstraintChanges[current] : current.replaceAll("article4", "articleFour")
+        );
+      }
+      if (crumb.data?.hasOwnProperty("_nots")) {
+        newsessionData["breadcrumbs"][nodeId]["data"]["_nots"]["property.constraints.planning"] = crumb["data"]["_nots"]["property.constraints.planning"].map(
+          (current) => Object.keys(combinedConstraintChanges).includes(current) ? combinedConstraintChanges[current] : current.replaceAll("article4", "articleFour")
+        );
+      }
+    });
+  }
+
+  if (Object.keys(passportData).includes("_constraints")) {
+    // _constraints is a list of two requests: planning data first, os roads second
+    const planningDataConstraints = passportData["_constraints"][0]["constraints"];
+    Object.entries(planningDataConstraints).forEach(([currentKey, currentData]) => {
+      if (Object.keys(combinedConstraintChanges).includes(currentKey)) {
+        const proposedKey = combinedConstraintChanges[currentKey];
+        currentData["fn"] = proposedKey;
+        newsessionData["passport"]["data"]["_constraints"][0]["constraints"][proposedKey] = currentData;
+        delete newsessionData["passport"]["data"]["_constraints"][0]["constraints"][currentKey];
+
+        Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
+          if (crumb.data?.hasOwnProperty("_constraints")) {
+            newsessionData["breadcrumbs"][nodeId]["data"]["_constraints"][0]["constraints"][proposedKey] = currentData;
+            delete newsessionData["breadcrumbs"][nodeId]["data"]["_constraints"][0]["constraints"][currentKey];
+          }
+        });
+      }
+
+      if (currentKey.includes("article4")) {
+        const proposedKey = currentKey.replaceAll("article4", "articleFour");
+        currentData["fn"] = proposedKey;
+        newsessionData["passport"]["data"]["_constraints"][0]["constraints"][proposedKey] = currentData;
+        delete newsessionData["passport"]["data"]["_constraints"][0]["constraints"][currentKey];
+
+        Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
+          if (crumb.data?.hasOwnProperty("_constraints")) {
+            newsessionData["breadcrumbs"][nodeId]["data"]["_constraints"][0]["constraints"][proposedKey] = currentData;
+            delete newsessionData["breadcrumbs"][nodeId]["data"]["_constraints"][0]["constraints"][currentKey];
+          }
+        });
+      }
+    });
+
+    const planningDataMetadata = passportData["_constraints"][0]["metadata"];
+    Object.entries(planningDataMetadata).forEach(([currentKey, currentData]) => {
+      // A4 is only relevant constraint in metadata
+      if (currentKey.includes("article4")) {
+        const proposedKey = currentKey.replaceAll("article4", "articleFour");
+        newsessionData["passport"]["data"]["_constraints"][0]["metadata"][proposedKey] = currentData;
+        delete newsessionData["passport"]["data"]["_constraints"][0]["metadata"][currentKey];
+
+        Object.entries(breadcrumbs).forEach(([nodeId, crumb]) => {
+          if (crumb.data?.hasOwnProperty("_constraints")) {
+            newsessionData["breadcrumbs"][nodeId]["data"]["_constraints"][0]["metadata"][proposedKey] = currentData;
+            delete newsessionData["breadcrumbs"][nodeId]["data"]["_constraints"][0]["metadata"][currentKey];
+          }
+        });
+      }
+    });
+  }
 
   return newsessionData;
 }
@@ -171,6 +244,16 @@ const projectTypeChanges = {
   "alter.deck": "alter.decks",
   "alter.internal.mezzanine": "internal.mezzanine",
   "alter.internal.loft": "internal.loft",
+};
+
+const drawBoundaryChanges = {
+  "property.boundary.site": "proposal.site",
+  "property.boundary.site.buffered": "proposal.site.buffered",
+  "property.boundary.area": "proposal.site.area",
+  "property.boundary.area.hectares": "proposal.site.area.hectares",
+  "property.boundary.title": "property.boundary",
+  "property.boundary.title.area": "property.boundary.area",
+  "property.boundary.title.area.hectares": "property.boundary.area.hectares",
 };
 
 // See https://docs.google.com/spreadsheets/d/1P_MjwuJlTshSsz1-9yLjBtZOqim93y31AGglturIaJA/edit?gid=0#gid=0

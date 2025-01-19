@@ -51,26 +51,28 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           console.log(`${timestamp} Successfully updated flow and published flow ${flowSlug}`);
         }
 
-        // // Iterate through sessions and update them individually if they have a DrawBoundary breadcrumb
-        // flow.sessions.forEach(async (session) => {
-        //   const drawBoundaryNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 10)?.[0];
-        //   const hasDrawBoundaryBreadcrumb = Object.keys(session.data?.breadcrumbs).includes(drawBoundaryNodeId);
+        // Iterate through sessions and update them individually if they have a FindProperty or PlanningConstraints breadcrumb
+        flow.sessions.forEach(async (session) => {
+          const findPropertyNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 9)?.[0];
+          const hasFindPropertyBreadcrumb = Object.keys(session.data?.breadcrumbs).includes(findPropertyNodeId);
+          const planningConstraintsNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 11)?.[0];
+          const hasPlanningConstraintsBreadcrumb = Object.keys(session.data?.breadcrumbs).includes(planningConstraintsNodeId);
 
-        //   if (hasDrawBoundaryBreadcrumb) {
-        //     console.log(`${timestamp} Updating session ${session.id} (${flowSlug})`);
-        //     const sessionData = migrateSessionData(session.data);
+          if (hasFindPropertyBreadcrumb || hasPlanningConstraintsBreadcrumb) {
+            console.log(`${timestamp} Updating session ${session.id} (${flowSlug})`);
+            const sessionData = migrateSessionData(session.data);
 
-        //     // Write session data to database
-        //     const sessionDataResponse = await client.updateSessionData(session.id, sessionData);
-        //     if (
-        //       sessionDataResponse?.update_lowcal_sessions_by_pk?.id
-        //     ) {
-        //       console.log(`${timestamp} Successfully updated session ${session.id} (${flowSlug})`);
-        //     }
-        //   } else {
-        //     console.log(`${timestamp} Skipping session without DrawBoundary breadcrumb ${session.id} (${flowSlug})`);
-        //   }
-        // });
+            // Write session data to database
+            const sessionDataResponse = await client.updateSessionData(session.id, sessionData);
+            if (
+              sessionDataResponse?.update_lowcal_sessions_by_pk?.id
+            ) {
+              console.log(`${timestamp} Successfully updated session ${session.id} (${flowSlug})`);
+            }
+          } else {
+            console.log(`${timestamp} Skipping session without FindProperty or PlanningConstraints breadcrumb ${session.id} (${flowSlug})`);
+          }
+        });
       } else if (isPublished) {
         // Update published flow data
         console.log(`${timestamp} Updating published flow ${flowSlug}`);
