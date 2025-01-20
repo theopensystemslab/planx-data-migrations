@@ -1273,6 +1273,9 @@ const oldSession = {
         "property.constraints.planning": [
           "article4",
           "article4.caz",
+          "article4.buckinghamshire.os262",
+          "article4.gateshead.saltwell.D4",
+          "article4.newcastle.saintPetersBasin3",
           "brownfieldSite",
           "designated.AONB",
           "greenBelt",
@@ -2623,6 +2626,9 @@ const oldSession = {
           "property.constraints.planning": [
             "article4",
             "article4.caz",
+            "article4.buckinghamshire.os262",
+            "article4.gateshead.saltwell.D4",
+            "article4.newcastle.saintPetersBasin3",
             "brownfieldSite",
             "designated.AONB",
             "greenBelt",

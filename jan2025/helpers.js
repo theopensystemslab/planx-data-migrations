@@ -41,7 +41,8 @@ const migrateFlowData = (flowData) => {
 
     // Article 4s (options and selectable planning constraints)
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"]?.startsWith("article4")) {
-      newFlowData[nodeId]["data"]["val"] = nodeData["data"]["val"].replace("article4", "articleFour");
+      const current = nodeData["data"]["val"];
+      newFlowData[nodeId]["data"]["val"] = councilA4Changes[current] || nodeData["data"]["val"].replace("article4", "articleFour");
       logs += `${timestamp} Updated article4 option val (node ${nodeId}); `;
     }
 
@@ -49,9 +50,8 @@ const migrateFlowData = (flowData) => {
       nodeData?.["type"] === 11 &&
       (nodeData?.["data"]?.["dataValues"]?.includes("article4") || nodeData?.["data"]?.["dataValues"]?.includes("article4.caz"))
     ) {
-      newFlowData[nodeId]["data"]["dataValues"] = nodeData["data"]["dataValues"].map(
-        current => current.startsWith("article4") ? current.replace("article4", "articleFour") : current
-      );
+      // councilA4Changes aren't configurable via modal so we just care about prefix replacement here
+      newFlowData[nodeId]["data"]["dataValues"] = nodeData["data"]["dataValues"].map(current => current.replace("article4", "articleFour"));
       logs += `${timestamp} Updated planning constraints selectable data values (node ${nodeId}); `;
     }
 
@@ -71,7 +71,7 @@ const migrateFlowData = (flowData) => {
 
     // Property types (option or setvalue type)
     if (
-      nodeData?.["data"]?.["val"] && 
+      nodeData?.["data"]?.["val"] &&
       Object.keys(propertyTypeChanges).includes(nodeData["data"]["val"])
     ) {
       const current = nodeData["data"]["val"];
@@ -128,7 +128,7 @@ const migrateSessionData = (sessionData) => {
   }
 
   // Planning constraints (including `_constraints` audit key)
-  const combinedConstraintChanges = {...listedGradeChanges, ...floodZoneChanges};
+  const combinedConstraintChanges = { ...listedGradeChanges, ...floodZoneChanges, ...councilA4Changes };
   if (Object.keys(passportData).includes("property.constraints.planning") || Object.keys(passportData).includes("_nots")) {
     newsessionData["passport"]["data"]["property.constraints.planning"] = passportData?.["property.constraints.planning"]?.map(
       (current) => Object.keys(combinedConstraintChanges).includes(current) ? combinedConstraintChanges[current] : current.replaceAll("article4", "articleFour")
@@ -249,7 +249,90 @@ const listedGradeChanges = {
 const floodZoneChanges = {
   "flood.zone.1": "flood.zoneOne",
   "flood.zone.2": "flood.zoneTwo",
+  "flood.zone.2.a": "flood.zoneTwo.a",
+  "flood.zone.2.b": "flood.zoneTwo.b",
   "flood.zone.3": "flood.zoneThree",
+  "flood.zone.3.a": "flood.zoneThree.a",
+  "flood.zone.3.b": "flood.zoneThree.b",
+};
+
+const councilA4Changes = {
+  "article4.barnet.hendonBurroughs.1": "articleFour.barnet.hendonBurroughs.one",
+  "article4.barnet.hendonBurroughs.2": "articleFour.barnet.hendonBurroughs.two",
+  "article4.buckinghamshire.DO10fulmer": "articleFour.buckinghamshire.DOTenfulmer",
+  "article4.buckinghamshire.eastamershamroadOS0006": "articleFour.buckinghamshire.eastamershamroadOSZeroZeroZeroSix",
+  "article4.buckinghamshire.eastamershamroadOS9269": "articleFour.buckinghamshire.eastamershamroadOSNineTwoSixNine",
+  "article4.buckinghamshire.northA404": "articleFour.buckinghamshire.northAFourZeroFour",
+  "article4.buckinghamshire.os1178": "articleFour.buckinghamshire.osOneOneSevenEight",
+  "article4.buckinghamshire.os262": "articleFour.buckinghamshire.osTwoSixTwo",
+  "article4.buckinghamshire.os3100": "articleFour.buckinghamshire.osThreeOneZeroZero",
+  "article4.buckinghamshire.os3313.a": "articleFour.buckinghamshire.osThreeThreeOneThree.a",
+  "article4.buckinghamshire.os3313.b": "articleFour.buckinghamshire.osThreeThreeOneThree.b",
+  "article4.buckinghamshire.os4729": "articleFour.buckinghamshire.osFourSevenTwoNine",
+  "article4.buckinghamshire.os5200": "articleFour.buckinghamshire.osFiveTwoZeroZero",
+  "article4.buckinghamshire.os6961": "articleFour.buckinghamshire.osSixNineSixOne",
+  "article4.buckinghamshire.os8050": "articleFour.buckinghamshire.osEightZeroFiveZero",
+  "article4.buckinghamshire.os8349": "articleFour.buckinghamshire.osEightThreeFourNine",
+  "article4.buckinghamshire.southA413": "articleFour.buckinghamshire.southAFourOneThree",
+  "article4.buckinghamshire.southpenfoldlaneOS262": "articleFour.buckinghamshire.southpenfoldlaneOSTwoSixThree",
+  "article4.camden.147kentishTown": "articleFour.camden.oneFourSevenKentishTown",
+  "article4.camden.187kentishTown": "articleFour.camden.oneEightSevenKentishTown",
+  "article4.camden.33yorkRise": "articleFour.camden.threeThreeYorkRise",
+  "article4.camden.eC3Caz": "articleFour.camden.eCThreeCaz",
+  "article4.camden.eC3NoCaz": "articleFour.camden.eCThreeNoCaz",
+  "article4.camden.suiGenC3": "articleFour.camden.suiGenCThree",
+  "article4.gateshead.saltwell.D1": "articleFour.gateshead.saltwell.dOne",
+  "article4.gateshead.saltwell.D2": "articleFour.gateshead.saltwell.dTwo",
+  "article4.gateshead.saltwell.D3": "articleFour.gateshead.saltwell.dThree",
+  "article4.gateshead.saltwell.D4": "articleFour.gateshead.saltwell.dFour",
+  "article4.gateshead.saltwell.D5": "articleFour.gateshead.saltwell.dFive",
+  "article4.medway.historicRochester.1": "articleFour.medway.historicRochester.one",
+  "article4.medway.historicRochester.2": "articleFour.medway.historicRochester.two",
+  "article4.medway.historicRochester.3": "articleFour.medway.historicRochester.three",
+  "article4.medway.historicRochester.4": "articleFour.medway.historicRochester.four",
+  "article4.medway.historicRochester.5": "articleFour.medway.historicRochester.five",
+  "article4.medway.historicRochester.6": "articleFour.medway.historicRochester.six",
+  "article4.medway.historicRochester.7": "articleFour.medway.historicRochester.seven",
+  "article4.medway.historicRochester.8": "articleFour.medway.historicRochester.eight",
+  "article4.medway.historicRochester.9": "articleFour.medway.historicRochester.nine",
+  "article4.medway.historicRochester.10": "articleFour.medway.historicRochester.ten",
+  "article4.medway.historicRochester.11": "articleFour.medway.historicRochester.eleven",
+  "article4.medway.historicRochester.12": "articleFour.medway.historicRochester.twelve",
+  "article4.medway.historicRochester.13": "articleFour.medway.historicRochester.thirteen",
+  "article4.medway.historicRochester.14": "articleFour.medway.historicRochester.fourteen",
+  "article4.medway.newRoad.1": "articleFour.medway.newRoad.one",
+  "article4.medway.newRoad.2": "articleFour.medway.newRoad.two",
+  "article4.medway.newRoad.3": "articleFour.medway.newRoad.three",
+  "article4.medway.newRoad.4": "articleFour.medway.newRoad.four",
+  "article4.medway.upperBush.1": "articleFour.medway.upperBush.one",
+  "article4.medway.upperBush.2": "articleFour.medway.upperBush.two",
+  "article4.medway.upperBush.3": "articleFour.medway.upperBush.three",
+  "article4.medway.upperBush.4": "articleFour.medway.upperBush.four",
+  "article4.medway.upperUpnor.1": "articleFour.medway.upperUpnor.one",
+  "article4.medway.upperUpnor.2": "articleFour.medway.upperUpnor.two",
+  "article4.medway.upperUpnor.3": "articleFour.medway.upperUpnor.three",
+  "article4.medway.upperUpnor.4": "articleFour.medway.upperUpnor.four",
+  "article4.medway.upperUpnor.5": "articleFour.medway.upperUpnor.five",
+  "article4.medway.upperUpnor.6": "articleFour.medway.upperUpnor.six",
+  "article4.medway.upperUpnor.7": "articleFour.medway.upperUpnor.seven",
+  "article4.medway.upperUpnor.8": "articleFour.medway.upperUpnor.eight",
+  "article4.medway.upperUpnor.9": "articleFour.medway.upperUpnor.nine",
+  "article4.medway.upperUpnor.10": "articleFour.medway.upperUpnor.ten",
+  "article4.medway.upperUpnor.11": "articleFour.medway.upperUpnor.eleven",
+  "article4.newcastle.hmo1": "articleFour.newcastle.hmoOne",
+  "article4.newcastle.hmo2": "articleFour.newcastle.hmoTwo",
+  "article4.newcastle.hmo3": "articleFour.newcastle.hmoThree",
+  "article4.newcastle.northumberlandGardens2": "articleFour.newcastle.northumberlandGardens3",
+  "article4.newcastle.saintPetersBasin1": "articleFour.newcastle.saintPetersBasinOne",
+  "article4.newcastle.saintPetersBasin2": "articleFour.newcastle.saintPetersBasinTwo",
+  "article4.newcastle.saintPetersBasin3": "articleFour.newcastle.saintPetersBasinThree",
+  "article4.newcastle.saintPetersBasin4": "articleFour.newcastle.saintPetersBasinFour",
+  "article4.newcastle.saintPetersBasin5": "articleFour.newcastle.saintPetersBasinFive",
+  "article4.stAlbans.harpenden1": "articleFour.stAlbans.harpendenOne",
+  "article4.stAlbans.harpenden2": "articleFour.stAlbans.harpendenTwo",
+  "article4.stAlbans.kimptonBottom.1": "articleFour.stAlbans.kimptonBottom.one",
+  "article4.stAlbans.kimptonBottom.2": "articleFour.stAlbans.kimptonBottom.two",
+  "article4.stAlbans.landBetweenRaggedHallAndM10": "articleFour.stAlbans.landBetweenRaggedHallAndMTen",
 };
 
 const projectTypeChanges = {

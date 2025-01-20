@@ -106,8 +106,8 @@ const expectedFlow = {
     },
     "2FoekDHPbA": {
         "data": {
-            "val": "articleFour.camden.caz",
-            "text": "CAZ"
+            "val": "articleFour.camden.oneFourSevenKentishTown",
+            "text": "Camden A4"
         },
         "type": 200
     },

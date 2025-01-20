@@ -1273,6 +1273,9 @@ const expectedSession = {
         "property.constraints.planning": [
           "articleFour",
           "articleFour.caz",
+          "articleFour.buckinghamshire.osTwoSixTwo",
+          "articleFour.gateshead.saltwell.dFour",
+          "articleFour.newcastle.saintPetersBasinThree",
           "brownfieldSite",
           "designated.AONB",
           "greenBelt",
@@ -2623,6 +2626,9 @@ const expectedSession = {
           "property.constraints.planning": [
             "articleFour",
             "articleFour.caz",
+            "articleFour.buckinghamshire.osTwoSixTwo",
+            "articleFour.gateshead.saltwell.dFour",
+            "articleFour.newcastle.saintPetersBasinThree",
             "brownfieldSite",
             "designated.AONB",
             "greenBelt",

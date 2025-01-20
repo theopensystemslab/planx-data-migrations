@@ -25,6 +25,8 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
   const { id, flow } = await client.getQueuedFlow();
   const flowSlug = `${flow?.team?.slug}/${flow?.slug}`;
 
+  if (!id) return;
+  
   if (id) {
     try {
       // There's 3 scenarios here: a flow is published & has active sessions, a flow is only published with no sessions, and a flow is unpublished
@@ -51,8 +53,8 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           console.log(`${timestamp} Successfully updated flow and published flow ${flowSlug}`);
         }
 
-        // Iterate through sessions and update them individually if they have a FindProperty or PlanningConstraints breadcrumb
-        flow.sessions.forEach(async (session) => {
+        // Iterate through sessions and update them individually if they have FindProperty or PlanningConstraints breadcrumb
+        for (const session of flow.sessions) {
           const findPropertyNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 9)?.[0];
           const hasFindPropertyBreadcrumb = Object.keys(session.data?.breadcrumbs).includes(findPropertyNodeId);
           const planningConstraintsNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 11)?.[0];
@@ -72,7 +74,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
           } else {
             console.log(`${timestamp} Skipping session without FindProperty or PlanningConstraints breadcrumb ${session.id} (${flowSlug})`);
           }
-        });
+        };
       } else if (isPublished) {
         // Update published flow data
         console.log(`${timestamp} Updating published flow ${flowSlug}`);
