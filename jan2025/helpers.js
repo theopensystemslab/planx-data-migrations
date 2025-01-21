@@ -39,6 +39,23 @@ const migrateFlowData = (flowData) => {
       logs += `${timestamp} Updated Filter category (node ${nodeId}); `;
     }
 
+    // Result flagset category change and overrides flag references
+    if (nodeData?.["type"] === 3) {
+      if (nodeData?.["data"]?.["flagSet"] === "Listed building consent") {
+        newFlowData[nodeId]["data"]["flagSet"] = "Works to listed buildings";
+        logs += `${timestamp} Updated Result flagset (node ${nodeId}); `;
+      }
+
+      Object.keys(nodeData?.["data"]?.["overrides"] || {})?.map((current) => {
+        if (Object.keys(flagChanges).includes(current)) {
+          const proposed = flagChanges[current];
+          newFlowData[nodeId]["data"]["overrides"][proposed] = nodeData["data"]["overrides"][current];
+          delete newFlowData[nodeId]["data"]["overrides"][current];
+          logs += `${timestamp} Updated Result overrides (node ${nodeId}); `;
+        }
+      });
+    }
+
     // Article 4s (options and selectable planning constraints)
     if (nodeData?.["type"] === 200 && nodeData?.["data"]?.["val"]?.startsWith("article4")) {
       const current = nodeData["data"]["val"];

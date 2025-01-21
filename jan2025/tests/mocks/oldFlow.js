@@ -11,8 +11,57 @@ const oldFlow = {
             "0xIFi1ZhfZ",
             "vEr4UyFu4u",
             "Z9dOoU0dD1",
-            "MQzrk4KPRO"
+            "MQzrk4KPRO",
+            "Result1",
+            "Result2",
         ]
+    },
+    "Result1": {
+        "data": {
+            "flagSet": "Planning permission",
+            "overrides": {
+                "IMMUNE": {
+                    "heading": "It looks like this project may not need planning permission. However, planning conditions are not included in this service at the moment so you should always check with the council before doing any work.",
+                    "description": "This project happened long enough ago that it may not need planning permission. However, planning conditions are not included in this service at the moment so you should always check with the council before doing any work. We recommend applying for a Lawful Development Certificate. This will give you legal confirmation that the project does not need planning permission."
+                },
+                "PP-NOTICE": {
+                    "heading": "You need to tell us about the changes ",
+                    "description": "It looks like this project may not need planning permission. However, you must tell us about the changes in writing before starting work. "
+                },
+                "MISSING_INFO": {
+                    "heading": "Missing information",
+                    "description": "We need some more information to find out whether your project needs planning permission."
+                },
+                "PRIOR_APPROVAL": {
+                    "heading": "It looks like this project needs Prior Approval",
+                    "description": "Prior Approval means you may need to apply for approval from your local planning authority that specific parts of the development are acceptable before you start work."
+                },
+                "NO_APP_REQUIRED": {
+                    "heading": "It looks like this project does not need planning permission. ",
+                    "description": "This project may fall under permitted development, and therefore may not need planning permission. However, planning conditions are not included in this service at the moment. We recommend applying for a Lawful Development Certificate. This will give you legal confirmation that the project does not need planning permission."
+                },
+                "PP-NOT_DEVELOPMENT": {
+                    "heading": "It looks like this project does not need planning permission",
+                    "description": "This project may fall outside the legal definition of development and may not need planning permission. You can check this by applying for a Lawful Development Certificate before starting work, as there may be other things we need to check. This will give you legal confirmation that the project does not need planning permission."
+                },
+                "PLANNING_PERMISSION_REQUIRED": {
+                    "heading": "It looks like this project needs planning permission",
+                    "description": "Based on the information you have provided, this project needs planning permission. Continue to find out how to apply."
+                }
+            }
+        },
+        "type": 3
+    },
+    "Result2": {
+        "type": 3,
+        "data": {
+            "flagSet": "Listed building consent",
+            "overrides": {
+                "LB-REQUIRED": {
+                    "heading": "Custom heading when LBC is required"
+                }
+            }
+        }
     },
     "02aNXeNi17": {
         "data": {
