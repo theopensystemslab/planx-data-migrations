@@ -22,19 +22,14 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
   });
 
   // Get a queued flow that hasn't been updated yet
-  const { id, flow } = await client.getQueuedFlow();
-  const flowSlug = `${flow?.team?.slug}/${flow?.slug}`;
-
-  if (!id) return;
-  
-  if (id) {
+  const { id, flow } = await client.getQueuedFlow();  
+  if (id && flow) {
     try {
-      const isPublished = flow.publishedFlows?.length > 0;
-      const isPublishedWithSessions = isPublished && flow.sessions?.length > 0;
-
+      const flowSlug = `${flow.team?.slug}/${flow.slug}`;
       console.log(`${timestamp} Fetching flow ${flowSlug}`);
 
-      if (isPublishedWithSessions) {
+      const hasSessions = flow.sessions?.length > 0;
+      if (hasSessions) {
         // Iterate through sessions and update them individually if they have FindProperty or PlanningConstraints breadcrumb
         for (const session of flow.sessions) {
           const findPropertyNodeId = Object.entries(flow.data).find(([_nodeId, nodeData]) => nodeData.type === 9)?.[0];

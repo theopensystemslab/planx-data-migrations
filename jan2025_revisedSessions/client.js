@@ -26,6 +26,7 @@ class Client {
         ) {
           id: flow_id
           flow {
+            data
             slug
             team {
               slug
