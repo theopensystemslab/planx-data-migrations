@@ -29,8 +29,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
   
   if (id) {
     try {
-      // There's 3 scenarios here: a flow is published & has active sessions, a flow is only published with no sessions, and a flow is unpublished
-      //   We're assuming an unpublished flow will never have associated active sessions because it's not publicly accessible
+      // Node tags only impact flow data, not sessions, so account for unpublished & published flows here
       const isPublished = flow.publishedFlows?.length > 0;
 
       // All scenarios update live flow data

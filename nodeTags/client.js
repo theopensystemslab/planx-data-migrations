@@ -38,17 +38,6 @@ class Client {
               id  
               data
             }
-            sessions: lowcal_sessions(
-              where: {
-                created_at: {_gte: "2024-12-20"}, 
-                _or: {
-                  submitted_at: {_gte: "2024-12-20"}
-                }
-              }
-            ) {
-              id
-              data
-            }
           }
         }
       }`
