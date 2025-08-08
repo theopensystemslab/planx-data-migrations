@@ -1,6 +1,11 @@
 ## July 2025
 
-See https://trello.com/c/OQhyVSjp/3372-templates-remove-customisation-tags
+This migration covers the following content changes - 
+ - Removing "customisation" tags
+    - See https://trello.com/c/OQhyVSjp/3372-templates-remove-customisation-tags
+ - Updating default DrawBoundary data to replace the GIF with a series of images
+   - Flagged by 2025 accessability audit
+   - Please see https://trello.com/c/cicnBMcf/3316-pause-able-gifs-a-p32?filter=gif
 
 ### Running script
 
@@ -22,7 +27,7 @@ WHERE team_id IN (1,2,3);
 Then run the script, which will fetch & update a flow from the audit table which has not been `updated` yet.
 
 ```sh
-cd nodeTags
+cd nodeTags2
 HASURA_ENV=local HASURA_SECRET=secret node index.js
 ```
 
@@ -30,7 +35,7 @@ HASURA_ENV=local HASURA_SECRET=secret node index.js
 
 Populate the table `temp_data_migrations_audit` on staging or production.
 
-Crontab is a very rudimentry tool but worked smoothly & Hasura remained healthy at this pace!
+Crontab is a very rudimentary tool but worked smoothly & Hasura remained healthy at this pace!
 
 ```sh
 # m h  dom mon dow   command
