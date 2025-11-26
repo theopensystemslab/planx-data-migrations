@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:fileNames": "node fileNames/index.js",
-    "start:titleBoundary": "node titleBoundary/index.js",
-    "start:passportValue": "node passportValue/index.js",
+    "start:fileNames": "node 2024/fileNames/index.js",
+    "start:titleBoundary": "node 2024/titleBoundary/index.js",
+    "start:passportValue": "node 2024/passportValue/index.js",
     "precommit": "prettier --write **/*.js && git add ."
   },
   "keywords": [],
