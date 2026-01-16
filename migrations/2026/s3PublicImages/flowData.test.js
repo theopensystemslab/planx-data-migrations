@@ -87,7 +87,7 @@ const expectedFlow = {
     },
     "0NV9SHkg8B": {
         "data": {
-            "img": "https://api.editor.planx.uk/file/public/xtsuube5/Terrace_outrigger_rearonly_4m.svg",
+            "img": "https://api.editor.planx.uk/file/public/zutlj3wr/Terrace_outrigger_rearonly_4m.svg",
             "text": "4m or less",
             "flags": [
                 "flag.pp.permittedDevelopment"
@@ -97,7 +97,7 @@ const expectedFlow = {
     },
     "0UKzdzbE9i": {
         "data": {
-            "img": "https://planx-temp.s3.eu-west-2.amazonaws.com/production/12eofbdx/Terrace_outrigger_sidewraparound_3m.svg",
+            "img": "https://api.editor.planx.uk/file/public/wc6ll3p1/Terrace_outrigger_sidewraparound_3m.svg",
             "text": "3m or less",
             "flags": [
                 "flag.pp.permittedDevelopment"
