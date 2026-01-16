@@ -1,6 +1,6 @@
 const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
-const { migrateFlowData, updatedHowMeasuredContent } = require("./helpers")
+const { migrateFlowData } = require("./helpers")
 
 describe("migrate flow data function", () => {
     it("#returns the expected data", () => {
