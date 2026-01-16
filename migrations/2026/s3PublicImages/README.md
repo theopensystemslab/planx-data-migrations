@@ -19,6 +19,18 @@ FROM flows
 WHERE (data)::text like '%planx-temp.s3.%';
 ```
 
+We'll also need to consider each latest `published_flow` which nests those above flows (which is ~141 more flows total because of PD) - 
+```psql
+INSERT INTO temp_data_migrations_audit (flow_id, team_id)
+SELECT DISTINCT ON (pf.flow_id) 
+	pf.flow_id,
+  f.team_id
+FROM published_flows pf
+  JOIN flows f on pf.flow_id = f.id
+WHERE (pf.data)::text like '%planx-temp.s3.%'
+ORDER BY pf.flow_id, pf.created_at DESC;
+```
+
 Then run the script, which will fetch & update a flow from the audit table which has not been `updated` yet.
 
 ```sh
