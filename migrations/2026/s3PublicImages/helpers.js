@@ -26,7 +26,6 @@ const migrateFlowData = (flowData) => {
   };
 }
 
-// TODO 
 // ref https://docs.google.com/spreadsheets/d/18FpaJHpMp1OipRi9DebxzUgwWliSwQBsq-e_NpL8Aq4/edit?gid=68312197#gid=68312197
 const fileChanges = {
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/4yc4d5ub/2storey_align.svg": "https://api.editor.planx.uk/file/public/vx079fbj/2storey_align.svg",
@@ -128,9 +127,9 @@ const fileChanges = {
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/pfl6khpa/height-flat-morethan2.5.svg": "https://api.editor.planx.uk/file/public/1xrzbkvb/height-flat-morethan2.5.svg",
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/oxzvdncf/height-flat-morethan3.svg": "https://api.editor.planx.uk/file/public/poqh9px8/height-flat-morethan3.svg",
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/a9uihmyh/height-flat-morethan4.svg": "https://api.editor.planx.uk/file/public/35yyrql2/height-flat-morethan4.svg",
-  // "https://planx-temp.s3.eu-west-2.amazonaws.com/production/gy8obaup/Howtomeasuredepth.svg": "",
-  // "https://planx-temp.s3.eu-west-2.amazonaws.com/production/s0hza0az/Howtomeasuredepth.svg": "",
-  // "https://planx-temp.s3.eu-west-2.amazonaws.com/production/sz8ois72/Howtomeasuredepth.svg": "",
+  "https://planx-temp.s3.eu-west-2.amazonaws.com/production/gy8obaup/Howtomeasuredepth.svg": "https://api.editor.planx.uk/file/public/2ad3beqh/extension_howtomeasuredepth.svg",
+  "https://planx-temp.s3.eu-west-2.amazonaws.com/production/s0hza0az/Howtomeasuredepth.svg": "https://api.editor.planx.uk/file/public/2ad3beqh/extension_howtomeasuredepth.svg",
+  "https://planx-temp.s3.eu-west-2.amazonaws.com/production/sz8ois72/Howtomeasuredepth.svg": "https://api.editor.planx.uk/file/public/2ad3beqh/extension_howtomeasuredepth.svg",
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/73ash8dx/porch_height_3morless.svg": "https://api.editor.planx.uk/file/public/v4ou3u8r/porch_height_3morless.svg",
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/4i4bvs9e/porch_height_morethan3m.svg": "https://api.editor.planx.uk/file/public/mhitu87z/porch_height_morethan3m.svg",
   "https://planx-temp.s3.eu-west-2.amazonaws.com/production/sfmw8tx7/porch_highway_2mormore.svg": "https://api.editor.planx.uk/file/public/pdlfcw2w/porch_highway_2mormore.svg",
