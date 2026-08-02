@@ -8,7 +8,6 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
   const url = {
     production: "https://hasura.editor.planx.uk/v1/graphql",
     staging: "https://hasura.editor.planx.dev/v1/graphql",
-    pizza7076: "https://hasura.7076.planx.pizza/v1/graphql",
     local: "http://localhost:7100/v1/graphql",
   };
 
@@ -28,20 +27,16 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
 
   if (!id) return;
   
-  if (id) {
+    if (id) {
     try {
-      // There's 3 scenarios here: a flow is published & has active sessions, a flow is only published with no sessions, and a flow is unpublished
-      //   We're assuming an unpublished flow will never have associated active sessions because it's not publicly accessible
+      // Article 4 keys for TRIAL TEAMS only impact flow data, not sessions, so account for unpublished & published flows only here
       const isPublished = flow.publishedFlows?.length > 0;
-      const isPublishedWithSessions = isPublished && flow.sessions?.length > 0;
 
       // All scenarios update live flow data
       console.log(`${timestamp} Updating flow ${flowSlug}`);
       const { flowData, logs: liveLogs } = migrateFlowData(flow.data);
 
-      if (isPublishedWithSessions) {
-        // TODO decide which teams in scope (only migrate sessions if existing live services)
-      } else if (isPublished) {
+      if (isPublished) {
         // Update published flow data
         console.log(`${timestamp} Updating published flow ${flowSlug}`);
         const { flowData: publishedFlowData, logs: publishedLogs } = migrateFlowData(flow.publishedFlows?.[0]?.data);
