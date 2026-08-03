@@ -2,15 +2,17 @@
 
 This migration fixes a number of new trial teams which have inconsistent names and Article 4 data values. See https://github.com/theopensystemslab/planx-new/pull/7114
 
+Completed on 3 August 2026 https://opensystemslab.slack.com/archives/C01E3AC0C03/p1785767769577409?thread_ts=1785705766.751399&cid=C01E3AC0C03
+
 ### Running script
 
-Runs on node v18
+Runs on node v24
 
 #### Locally
 
 Ensure your planx-new docker container is running locally.
 
-Populate the table `temp_data_migrations_audit` with flows for the impacted teams. Assumes that PR to update slugs has merged first!
+Populate the table `temp_data_migrations_audit` with flows for the impacted teams (plus single 'testing' team mock flow used in test files). Assumes that PR to update slugs has merged first!
 
 ```psql
 INSERT INTO temp_data_migrations_audit (flow_id, team_id)
@@ -23,7 +25,7 @@ WHERE t.slug IN ('adur-worthing', 'bristol', 'greater-cambridge-shared-planning'
 Then run the script, which will fetch & update a flow from the audit table which has not been `updated` yet.
 
 ```sh
-cd 2026/teamSlugs
+cd migrations/2026/teamSlugs
 HASURA_ENV=local HASURA_SECRET=secret node index.js
 ```
 
