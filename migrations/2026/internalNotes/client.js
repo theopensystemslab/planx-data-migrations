@@ -91,15 +91,55 @@ class Client {
     if (errors || !data) throw new Error(formatJSON({ data, errors }));
     return { ...data };
   }
-}
 
-async updateNoteContent() {
-  
-  return;
-}
+  async createAttachedNote(flowId, nodeId, text) {
+    // Default 'Platform Admin' user ID
+    const userId = 466;
 
-async updateNotePosition() {
-  return;
+    const { data, errors } = await this.graphQL(
+      `mutation InsertNoteContent($userId: Int!, $text: String!) {
+        insert_flow_note_content_one(
+          object: {
+            text: $text
+            created_by: $userId
+            updated_by: $userId
+          }
+        ) {
+          id
+        }
+      }
+    `,
+      { userId, text },
+    );
+    if (errors || !data) throw new Error(formatJSON({ data, errors }));
+
+    const noteId = data?.insert_flow_note_content_one?.id;
+
+    const { data: positionData, errors: positionErrors } = await this.graphQL(
+      `mutation InsertNotePosition(
+        $flowId: uuid!
+        $noteId: uuid!
+        $nodeId: String!
+        $userId: Int!
+      ) {
+        insert_flow_note_positions_one(
+          object: {
+            flow_id: $flowId
+            note_id: $noteId
+            node_id: $nodeId
+            created_by: $userId
+          }
+        ) {
+          note_id
+        }
+      }
+    `,
+      { flowId, noteId, nodeId, userId },
+    );
+    if (positionErrors || !positionData) throw new Error(formatJSON({ data, errors }));
+    
+    return noteId;
+  }
 }
 
 function formatJSON({ data, errors }) {

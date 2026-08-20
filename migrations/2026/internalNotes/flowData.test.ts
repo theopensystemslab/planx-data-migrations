@@ -1,3 +1,19 @@
+const { describe, it } = require("node:test");
+const assert = require("node:assert/strict");
+const { migrateFlowData } = require("./helpers")
+
+describe("migrate flow data function", () => {
+  it("#returns the expected flow data", () => {
+    const migratedFlow = migrateFlowData(oldFlow).flowData;
+    assert.deepStrictEqual(migratedFlow, expectedFlow);
+  });
+
+  it("#returns the expected notes", () => {
+    const extractedNotes = migrateFlowData(oldFlow).notes;
+    assert.deepStrictEqual(extractedNotes, expectedExtractedNotes);
+  });
+});
+
 // https://editor.planx.uk/app/testing/internal-notes-migration
 const oldFlow = {
   "_root": {
@@ -65,7 +81,7 @@ const oldFlow = {
   }
 };
 
-const extractedNotes = [
+const expectedExtractedNotes = [
   {
     nodeId: "Section",
     text: "This is an internal note on a section"
