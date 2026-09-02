@@ -43,7 +43,7 @@ const migrateFlowData = (flowData) => {
 
 const removeHtmlTags = (str) => {
   if (!str) return '';
-  return str.replace(/<[^>]*>/g, '');
+  return str.replace(/[<>]/g, '');
 };
 
 module.exports = { migrateFlowData };
