@@ -9,6 +9,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
     production: "https://hasura.editor.planx.uk/v1/graphql",
     staging: "https://hasura.editor.planx.dev/v1/graphql",
     local: "http://localhost:7100/v1/graphql",
+    pizza7334: "https://hasura.7334.planx.pizza/v1/graphql",
   };
 
   const hasuraSecret = process.env["HASURA_SECRET"];
