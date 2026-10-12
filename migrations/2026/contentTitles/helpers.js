@@ -45,7 +45,13 @@ const migrateFlowData = (flowData) => {
 
 const removeHtmlTags = (str) => {
   if (!str) return '';
-  return str.replace(/<[^>]*>/g, '');
+  // Repeat until stable so tags can't reassemble
+  let previous;
+  do {
+    previous = str;
+    str = str.replace(/<[^>]*>/g, '');
+  } while (str !== previous);
+  return str;
 };
 
 const decodeHtmlEntities = (str) => {
