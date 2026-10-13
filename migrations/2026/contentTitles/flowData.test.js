@@ -49,6 +49,22 @@ const oldFlow = {
             "resetButton": false
         },
         "type": 250
+    },
+    // Older content with a leading H2 instead of an H1
+    "LeadingH2Title": {
+        "data": {
+            "content": "<h2>Some H2 title</h2><p>Some text</p><h2>Some other H2 title</h2><p>Some text</p>",
+            "resetButton": false
+        },
+        "type": 250
+    },
+    // Non-content-type node stays untouched
+    "QWithTitleContent": {
+        "data": {
+            "text": "This is a question",
+            "content": "<h1>Some H1 title</h1><h2>Some H2 title</h2><p>Some text</p>"
+        },
+        "type": 100
     }
 };
 
@@ -98,5 +114,21 @@ const expectedFlow = {
             "resetButton": false
         },
         "type": 250
+    },
+    "LeadingH2Title": {
+        "data": {
+            "tags": [],
+            "title": "Some H2 title",
+            "content": "<p>Some text</p><h1>Some other H2 title</h1><p>Some text</p>",
+            "resetButton": false
+        },
+        "type": 250
+    },
+    "QWithTitleContent": {
+        "data": {
+            "text": "This is a question",
+            "content": "<h1>Some H1 title</h1><h2>Some H2 title</h2><p>Some text</p>"
+        },
+        "type": 100
     }
 };

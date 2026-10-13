@@ -15,16 +15,16 @@ const migrateFlowData = (flowData) => {
     // Skip nodes without rich text content, or which have already been migrated
     if (!content || typeof content !== "string" || currentData["title"]) return;
 
-    // Set the leading H1 as the component title
-    const leadingH1 = content.match(/^\s*<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
-    if (!leadingH1) return;
+    // Set the leading H1 (or H2, in older content) as the component title
+    const leadingHeading = content.match(/^\s*<h([12])\b[^>]*>([\s\S]*?)<\/h\1>/i);
+    if (!leadingHeading) return;
 
-    const title = decodeHtmlEntities(removeHtmlTags(leadingH1[1])).trim();
+    const title = decodeHtmlEntities(removeHtmlTags(leadingHeading[2])).trim();
     if (!title) return;
 
-    // Remove the leading H1 from content, then promote H2s to H1s
+    // Remove the leading heading from content, then promote H2s to H1s
     const newContent = content
-      .slice(leadingH1[0].length)
+      .slice(leadingHeading[0].length)
       .replace(/<h2\b/gi, "<h1")
       .replace(/<\/h2>/gi, "</h1>");
 
@@ -62,6 +62,7 @@ const decodeHtmlEntities = (str) => {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
     .replace(/&amp;/g, '&');
 };
 

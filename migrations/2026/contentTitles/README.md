@@ -1,6 +1,6 @@
 ## October 2026
 
-This migration moves H1 elements in content components to their new dedicated title field, and promotes H2 elements to H1 elements respective of the header element incrementor introduced here: https://github.com/theopensystemslab/planx-new/pull/815
+This migration moves the leading H1 element (or leading H2, in older content) in content components to their new dedicated title field, and promotes H2 elements to H1 elements respective of the header element incrementor introduced here: https://github.com/theopensystemslab/planx-new/pull/815
 
 ### Running script
 
@@ -10,14 +10,14 @@ Runs on node v24
 
 Ensure your planx-new docker container is running locally.
 
-Populate the table `temp_data_migrations_audit` with flows that have Content components (type `250`) containing an H1 -
+Populate the table `temp_data_migrations_audit` with flows that have Content components (type `250`) containing an H1 or H2 -
 
 ```psql
 INSERT INTO temp_data_migrations_audit (flow_id, team_id)
 SELECT DISTINCT f.id, f.team_id
 FROM flows f, jsonb_each(f.data) AS node(key, value)
 WHERE (node.value->>'type')::int = 250
-  AND node.value->'data'->>'content' LIKE '%<h1%';
+  AND (node.value->'data'->>'content' LIKE '%<h1%' OR node.value->'data'->>'content' LIKE '%<h2%');
 ```
 
 We'll also need to consider each latest `published_flow` which nests Content components from other flows -
@@ -28,7 +28,7 @@ SELECT DISTINCT ON (pf.flow_id)
   f.team_id
 FROM published_flows pf
   JOIN flows f on pf.flow_id = f.id
-WHERE (pf.data)::text like '%<h1%'
+WHERE ((pf.data)::text like '%<h1%' OR (pf.data)::text like '%<h2%')
   AND pf.flow_id NOT IN (SELECT flow_id FROM temp_data_migrations_audit)
 ORDER BY pf.flow_id, pf.created_at DESC;
 ```
