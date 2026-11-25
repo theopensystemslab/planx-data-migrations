@@ -3,11 +3,26 @@ const assert = require("node:assert/strict");
 const { migrateFlowData } = require("./helpers")
 
 describe("migrate flow data function", () => {
-    it("#returns the expected data", () => {
-        const migratedFlow = migrateFlowData(oldFlow).flowData;
+    it("#returns the expected data when there have been customisations", () => {
+        const migratedFlow = migrateFlowData(oldFlow, edits).flowData;
         assert.deepStrictEqual(migratedFlow, expectedFlow);
     });
+
+    it("#retains the same oldFlow and does not add a note when there have been no user edits yet", () => {
+        const migratedFlow = migrateFlowData(oldFlow, noEdits).flowData;
+        assert.deepStrictEqual(migratedFlow, oldFlow);
+    });
 });
+
+// Example templated_flow_edits
+const edits = {
+  // While "Vyqjfvcdtn" is the first templated node found in order, we only have an edit for "Z4yXiPwTTb" so we expect the note to be added to it
+  "Z4yXiPwTTb": {
+    "text": "Is this a responsive checklist",
+  },
+};
+
+const noEdits = null;
 
 // Example nodes
 const oldFlow = {
@@ -89,7 +104,6 @@ const expectedFlow = {
             "text": "Is this a test",
             "isTemplatedNode": true,
             "areTemplatedNodeInstructionsRequired": false,
-            "notes": "Content migration test note"
         },
         "edges": [
             "073tGyEhSy"
@@ -110,6 +124,7 @@ const expectedFlow = {
             "tags": [],
             "isTemplatedNode": true,
             "areTemplatedNodeInstructionsRequired": false,
+            "notes": "Content migration test note",
         },
         "edges": [
             "vS8G0anQAF"

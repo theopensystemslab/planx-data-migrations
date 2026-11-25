@@ -9,6 +9,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
     production: "https://hasura.editor.planx.uk/v1/graphql",
     staging: "https://hasura.editor.planx.dev/v1/graphql",
     local: "http://localhost:7100/v1/graphql",
+    pizza: "https://hasura.7974.planx.pizza/v1/graphql",
   };
 
   const hasuraSecret = process.env["HASURA_SECRET"];
@@ -22,8 +23,9 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
   });
 
   // Get a queued flow that hasn't been updated yet
-  const { id, flow } = await client.getQueuedFlow();
+  const { id, flow } = await client.getQueuedFlowWithTemplatedFlowEdits();
   const flowSlug = `${flow?.team?.slug}/${flow?.slug}`;
+  const templatedFlowEdits = flow?.edits?.data;
 
   if (!id) return;
 
@@ -32,7 +34,7 @@ const timestamp = `[${new Date().toISOString().replace(/T/, ' ').replace(/\..+/,
       // Update live flow data only, *not* the published version in place 
       //   We specifically want to pickup a diff on editor publish action after source template publish has been pushed out
       console.log(`${timestamp} Updating flow ${flowSlug}`);
-      const { flowData, logs: liveLogs } = migrateFlowData(flow.data);
+      const { flowData, logs: liveLogs } = migrateFlowData(flow.data, templatedFlowEdits);
 
       // Write to database
       const flowResponse = await client.updateQueuedFlow(id, flowData, liveLogs);

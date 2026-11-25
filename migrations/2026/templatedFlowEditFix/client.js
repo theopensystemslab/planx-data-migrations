@@ -17,7 +17,7 @@ class Client {
     return result.json();
   }
 
-  async getQueuedFlow() {
+  async getQueuedFlowWithTemplatedFlowEdits() {
     const { data, errors } = await this.graphQL(
       `query GetQueuedFlow {
         temp_data_migrations_audit(
@@ -31,6 +31,9 @@ class Client {
               slug
             }
             data
+            edits: templated_flow_edit {
+              data
+            }
           }
         }
       }`
